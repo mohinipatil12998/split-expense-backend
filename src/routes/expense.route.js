@@ -4,7 +4,7 @@ import {
   getExpensesHandler,
   updateExpenseHandler,
   deleteExpenseHandler,
-  getExpensesByGroupHandler, // New handler for group-specific expenses
+  // getExpensesByGroupHandler, // New handler for group-specific expenses
 } from '../controllers/expense.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 
@@ -22,6 +22,6 @@ router
   .delete(protect, deleteExpenseHandler);
 
 // Route to get expenses by group
-router.route('/group/:groupId').get(protect, getExpensesByGroupHandler);
+// router.route('/expensegroup/:groupId').get(protect, getExpensesByGroupHandler);
 
 export default router;
