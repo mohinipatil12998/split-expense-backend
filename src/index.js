@@ -1,6 +1,7 @@
 import express from 'express';
+import cors from 'cors';
 import { connectDB } from './config/db.js'
-import {router as apiRouter}  from '../src/router.js';
+import {router as apiRouter}  from './router.js';
 
 // PORT NUMBER 
 const port = process.env.PORT || 5000
@@ -12,6 +13,8 @@ const  app = express();
 // This middleware is used to parse incoming requests with JSON payloads
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors());
 
 
 // BINDS THE APP TO ALL ROUTES
