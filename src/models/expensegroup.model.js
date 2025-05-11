@@ -1,26 +1,18 @@
 import { getConnection } from "../config/db.js";
 
-const createExpenseGroup = async (groupName, userId, createdDate, category) => {
+const createExpenseGroup = async (groupName, members, userId) => {
   const connection = await getConnection();
   const [group] = await connection.execute(
-    "INSERT INTO expensegroup (name, created_by_user_id, created_date) VALUES (?, ?, ?, ?)",
-    [groupName, userId, createdDate]
+    "INSERT INTO expense_group (name, created_by_user_id, created_date) VALUES (?, ?, ? )",
+    [groupName, userId, new Date()]
   );
   
-console.log("GROUP",group);
+  const groupId = group.insertId;
   const [result] = await connection.execute(
-    "INSERT INTO expenses (user_id, description, amount, category) VALUES (?, ?, ?, ?)",
-    [userId, groupName, 0, category]
+    "INSERT INTO expense_group_users (user_id, group_id, joined_date) VALUES (?, ?, ?)",
+    [userId, groupId,new Date()]
   );
-
-  // Add user to the group
-  // const JoinedDate = new Date();
-//   const [groupUser] = await connection.execute(
-//     "INSERT INTO expensegroup (user_id, group_id, joinedDate) VALUES (?, ?, ?, ?)",
-//     [groupName, userId, JoinedDate]
-//   );
-
-//   return getExpenseById(result.insertId);
+  return getExpenseById(result.insertId);
 };
 
 /**
@@ -42,16 +34,16 @@ console.log("GROUP",group);
 const getExpenseGroupById = async (id) => {
   const connection = await getConnection();
   const [expenses] = await connection.execute(
-    "SELECT * FROM expenses WHERE id = ?",
+    "SELECT * FROM expense_group WHERE created_by_user_id  = ?",
     [id]
   );
-  return expenses[0];
+  return expenses;
 };
 
 const getExpenseGroupByUser = async (userId) => {
   const connection = await getConnection();
   const [expenses] = await connection.execute(
-    "SELECT * FROM expenses WHERE userId = ? ORDER BY date DESC",
+    "SELECT * FROM expenses WHERE user_id = ? ORDER BY date DESC",
     [userId]
   );
   return expenses;
@@ -95,5 +87,6 @@ export {
   getExpenseGroupByUser,
   updateExpenseGroup,
   deleteExpenseGroup,
-  addUserIntoExpenseGroup
+  addUserIntoExpenseGroup,
+  
 };

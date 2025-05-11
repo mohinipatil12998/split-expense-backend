@@ -1,28 +1,26 @@
-import { createExpenseGroup, deleteExpenseGroup, getExpenseGroupByUser, updateExpenseGroup } from '../models/expenseGroup.model.js';
+import {
+  createExpenseGroup,
+  deleteExpenseGroup,
+  getExpenseGroupById,
+  getExpenseGroupByUser,
+  updateExpenseGroup,
+} from "../models/expensegroup.model.js";
 
 const createExpenseGroupHandler = async (req, res) => {
-
-    res.send("createExpenseGroupHandler");
-    
-    console.log("createExpenseGroupHandler");
   try {
     const { userId, groupName, members } = req.body;
     console.log(userId, groupName, members);
 
-    const expenseGroup = await createExpenseGroup(
-      userId,
-      groupName,
-      members
-    );
+    const expenseGroup = await createExpenseGroup(groupName, members, userId);
     res.status(201).json(expenseGroup);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: err });
   }
 };
 
 const getExpenseGroupsHandler = async (req, res) => {
   try {
-    const expenseGroup = await getExpenseGroupByUser(req.user_id);
+    const expenseGroup = await getExpenseGroupById(req.body.user_id);
     res.json(expenseGroup);
   } catch (err) {
     res.status(500).json({ message: err.message });
