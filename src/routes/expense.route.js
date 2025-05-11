@@ -1,20 +1,27 @@
-import express from 'express'
+import express from 'express';
 import {
   createExpenseHandler,
   getExpensesHandler,
   updateExpenseHandler,
-  deleteExpenseHandler
-} from '../controllers/expense.controller.js'
-import { protect } from '../middleware/auth.middleware.js'
+  deleteExpenseHandler,
+  getExpensesByGroupHandler, // New handler for group-specific expenses
+} from '../controllers/expense.controller.js';
+import { protect } from '../middleware/auth.middleware.js';
 
-const router = express.Router()
+const router = express.Router();
 
-router.route('/')
+// Routes for general expenses
+router
+  .route('/')
   .post(protect, createExpenseHandler)
-  .get(protect, getExpensesHandler)
+  .get(protect, getExpensesHandler);
 
-router.route('/:id')
+router
+  .route('/:id')
   .put(protect, updateExpenseHandler)
-  .delete(protect, deleteExpenseHandler)
+  .delete(protect, deleteExpenseHandler);
 
-export default router
+// Route to get expenses by group
+router.route('/group/:groupId').get(protect, getExpensesByGroupHandler);
+
+export default router;

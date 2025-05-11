@@ -1,8 +1,8 @@
-import { config } from 'dotenv';
-config();
+
 
 import mysql from 'mysql2/promise';
-
+import dotenv from 'dotenv';
+dotenv.config();
 let connection;
 
 // Create a connection to the database
