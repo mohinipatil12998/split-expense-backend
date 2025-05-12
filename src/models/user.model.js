@@ -82,7 +82,7 @@ const getUserById = async (id) => {
 const getAllUsers = async () => {
   const connection = await getConnection()
   const [users] = await connection.execute(
-    'SELECT id, name, email FROM users'
+    'SELECT user_id, name, email FROM users'
   )
   return users
 }
