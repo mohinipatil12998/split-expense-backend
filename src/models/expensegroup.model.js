@@ -6,13 +6,13 @@ const createExpenseGroup = async (groupName, members, userId) => {
     "INSERT INTO expense_group (name, created_by_user_id, created_date) VALUES (?, ?, ? )",
     [groupName, userId, new Date()]
   );
-  
+
   const groupId = group.insertId;
   const [result] = await connection.execute(
     "INSERT INTO expense_group_users (user_id, group_id, joined_date) VALUES (?, ?, ?)",
-    [userId, groupId,new Date()]
+    [userId, groupId, new Date()]
   );
-  return getExpenseById(result.insertId);
+  return getExpenseGroupById(result.insertId);
 };
 
 /**
@@ -30,7 +30,6 @@ const createExpenseGroup = async (groupName, members, userId) => {
  * @returns 
  */
 
-
 const getExpenseGroupById = async (id) => {
   const connection = await getConnection();
   const [expenses] = await connection.execute(
@@ -43,10 +42,32 @@ const getExpenseGroupById = async (id) => {
 const getExpenseGroupByUser = async (userId) => {
   const connection = await getConnection();
   const [expenses] = await connection.execute(
-    "SELECT * FROM expenses WHERE user_id = ? ORDER BY date DESC",
+    "SELECT * FROM expense_group WHERE user_id = ? ORDER BY date DESC",
     [userId]
   );
   return expenses;
+};
+
+const getExpenseGroupUsersByGroupId = async (groupId) => {
+  const connection = await getConnection();
+  const [users] = await connection.execute(
+    `SELECT 
+      egu.group_user_id,
+      egu.group_id,
+      u.user_id,
+      u.name AS user_name,
+      u.email
+    FROM 
+      expense_group_users AS egu
+    JOIN 
+      expense_group AS eg ON egu.group_id = eg.group_id
+    JOIN 
+      users AS u ON egu.user_id = u.user_id
+    WHERE 
+      egu.group_id = ?;`,
+    [groupId]
+  );
+  return users;
 };
 
 const updateExpenseGroup = async (
@@ -74,12 +95,22 @@ const deleteExpenseGroup = async (id, userId) => {
 
 const addUserIntoExpenseGroup = async (userId, groupId) => {
   const connection = await getConnection();
+
+  const [rows] = await connection.execute(
+    "SELECT 1 FROM expense_group_users WHERE user_id = ? AND group_id = ? LIMIT 1",
+    [userId, groupId]
+  );
+
+  if (rows.length > 0) {
+    throw new Error("User already in group.");
+  }
+
   const [result] = await connection.execute(
     "INSERT INTO expense_group_users (user_id, group_id) VALUES (?, ?)",
     [userId, groupId]
   );
   return getExpenseGroupById(result.insertId);
-}
+};
 
 export {
   createExpenseGroup,
@@ -88,5 +119,5 @@ export {
   updateExpenseGroup,
   deleteExpenseGroup,
   addUserIntoExpenseGroup,
-  
+  getExpenseGroupUsersByGroupId,
 };

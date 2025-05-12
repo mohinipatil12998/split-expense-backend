@@ -5,12 +5,16 @@ import {
   deleteExpenseGroupHandler,
   getExpenseGroupsHandler,
   updateExpenseGroupHandler,
+  getExpenseGroupUserHandler,
+  addIntoExpenseGroupHandler,
 } from "../controllers/expensegroup.controller.js";
 
 const router = express.Router();
 
 router.post('/', protect, createExpenseGroupHandler);
-router.get('/', protect, getExpenseGroupsHandler);
+router.get('/group/:group_id/members', protect, getExpenseGroupUserHandler);
+router.post('/addmember', protect, addIntoExpenseGroupHandler)
+router.get('/:user_id', protect, getExpenseGroupsHandler);
 router.put('/:id', protect, updateExpenseGroupHandler);
 router.delete('/:id', protect, deleteExpenseGroupHandler);
 

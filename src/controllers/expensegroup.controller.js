@@ -4,6 +4,8 @@ import {
   getExpenseGroupById,
   getExpenseGroupByUser,
   updateExpenseGroup,
+  getExpenseGroupUsersByGroupId,
+  addUserIntoExpenseGroup,
 } from "../models/expensegroup.model.js";
 
 const createExpenseGroupHandler = async (req, res) => {
@@ -14,18 +16,33 @@ const createExpenseGroupHandler = async (req, res) => {
     const expenseGroup = await createExpenseGroup(groupName, members, userId);
     res.status(201).json(expenseGroup);
   } catch (err) {
+    console.error("Error creating expense group:", err);
     res.status(400).json({ message: err });
   }
 };
 
 const getExpenseGroupsHandler = async (req, res) => {
+  console.log('req.params.user_id', req.params);
+  
   try {
-    const expenseGroup = await getExpenseGroupById(req.body.user_id);
+    const expenseGroup = await getExpenseGroupById(req.params.user_id);
     res.json(expenseGroup);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
+const getExpenseGroupUserHandler = async (req, res) => {
+  try {
+    const expenseGroupUsers = await getExpenseGroupUsersByGroupId(req.params.group_id);
+    res.json(expenseGroupUsers);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+
+
 
 const updateExpenseGroupHandler = async (req, res) => {
   try {
@@ -54,9 +71,21 @@ const deleteExpenseGroupHandler = async (req, res) => {
   }
 };
 
+const addIntoExpenseGroupHandler = async (req, res) => {
+  try {
+    const { user_id, group_id } = req.body;
+    await addUserIntoExpenseGroup(user_id, group_id);
+    res.json({ message: "expenseGroup member add successfully" });
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
+};
+
 export {
   createExpenseGroupHandler,
   getExpenseGroupsHandler,
   updateExpenseGroupHandler,
   deleteExpenseGroupHandler,
+  getExpenseGroupUserHandler,
+  addIntoExpenseGroupHandler
 };
