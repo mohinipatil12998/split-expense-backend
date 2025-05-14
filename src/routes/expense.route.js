@@ -4,7 +4,7 @@ import {
   getExpensesHandler,
   updateExpenseHandler,
   deleteExpenseHandler,
-  // getExpensesByGroupHandler, // New handler for group-specific expenses
+  splitExpenseHandler, // Import the split expense handler
 } from '../controllers/expense.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 
@@ -21,7 +21,7 @@ router
   .put(protect, updateExpenseHandler)
   .delete(protect, deleteExpenseHandler);
 
-// Route to get expenses by group
-// router.route('/expensegroup/:groupId').get(protect, getExpensesByGroupHandler);
+// Route for splitting an expense
+router.route('/split_expense').post(protect, splitExpenseHandler);
 
 export default router;
