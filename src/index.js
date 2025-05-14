@@ -16,7 +16,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 
-
+app.get('check', (req,res)=>{
+    res.json({message: 'successfully'})
+})
 // BINDS THE APP TO ALL ROUTES
 app.use('/api', apiRouter)
 
