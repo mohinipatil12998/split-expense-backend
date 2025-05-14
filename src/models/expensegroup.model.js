@@ -47,6 +47,28 @@ const getExpenseGroupByUser = async (userId) => {
   );
   return expenses;
 };
+const getGroupUsersWithDetails = async (userId) => {
+   const connection = await getConnection();
+  const [rows] = await connection.execute(`
+    SELECT 
+      eg.group_id,
+      eg.name AS group_name,
+      u.user_id,
+      u.name AS user_name,
+      u.email,
+      egu.joined_date
+    FROM 
+      expense_group_users egu
+    JOIN 
+      expense_group eg ON eg.group_id = egu.group_id
+    JOIN 
+      users u ON u.user_id = egu.user_id
+    WHERE 
+      u.user_id = ?
+  `, [userId]);
+
+  return rows;
+};
 
 const getExpenseGroupUsersByGroupId = async (groupId) => {
   const connection = await getConnection();
@@ -120,4 +142,5 @@ export {
   deleteExpenseGroup,
   addUserIntoExpenseGroup,
   getExpenseGroupUsersByGroupId,
+  getGroupUsersWithDetails,
 };

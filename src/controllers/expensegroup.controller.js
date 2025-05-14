@@ -6,6 +6,7 @@ import {
   updateExpenseGroup,
   getExpenseGroupUsersByGroupId,
   addUserIntoExpenseGroup,
+  getGroupUsersWithDetails,
 } from "../models/expensegroup.model.js";
 
 const createExpenseGroupHandler = async (req, res) => {
@@ -38,6 +39,15 @@ const getExpenseGroupUserHandler = async (req, res) => {
     res.json(expenseGroupUsers);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+}
+
+const getGroupUsersWithDetailsHanlder = async (req,res)=>{
+  try {
+     const r = await getGroupUsersWithDetails(req.params.user_id);
+      res.json(r);
+  } catch (error) {
+     res.status(500).json({ message: error.message });
   }
 }
 
@@ -87,5 +97,6 @@ export {
   updateExpenseGroupHandler,
   deleteExpenseGroupHandler,
   getExpenseGroupUserHandler,
-  addIntoExpenseGroupHandler
+  addIntoExpenseGroupHandler,
+  getGroupUsersWithDetailsHanlder
 };
